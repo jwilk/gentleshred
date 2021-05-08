@@ -71,30 +71,26 @@ void shred_file(int fd, const char *path)
 {
     struct statvfs st;
     int rc = fstatvfs(fd, &st);
-    if (rc < 0) {
+    if (rc < 0)
         posix_error(path);
-    }
     size_t bufsize = st.f_bsize;
     char *buffer = malloc(bufsize);
-    if (buffer == NULL) {
+    if (buffer == NULL)
         posix_error("malloc()");
-    }
     char *zbuffer = calloc(bufsize, 1);
-    if (zbuffer == NULL) {
+    if (zbuffer == NULL)
         posix_error("calloc()");
-    }
     while (1) {
         ssize_t n = xread(fd, buffer, bufsize);
         if (n < 0)
             posix_error(path);
         if (n > 0) {
             bool shred_needed = false;
-            for (ssize_t i = 0; i < n; i++) {
+            for (ssize_t i = 0; i < n; i++)
                 if (buffer[i]) {
                     shred_needed = true;
                     break;
                 }
-            }
             if (shred_needed) {
                 off_t off = lseek(fd, -n, SEEK_CUR);
                 if (off < 0)
@@ -143,9 +139,8 @@ int main(int argc, char **argv)
     for (; *argv; argv++) {
         const char *path = *argv;
         int fd = open(path, O_RDWR);
-        if (fd < 0) {
+        if (fd < 0)
             posix_error(path);
-        }
         shred_file(fd, path);
         close(fd);
     }
