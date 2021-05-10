@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,14 +16,18 @@
 
 #define PROGRAM_NAME "gentleshred"
 
+static size_t block_size = 0;
+static const size_t block_size_limit = SIZE_MAX / 2;
+
 static void show_usage(FILE *fp)
 {
-    fprintf(fp, "Usage: %s FILE [FILE...]\n", PROGRAM_NAME);
+    fprintf(fp, "Usage: %s [-b SIZE] FILE [FILE...]\n", PROGRAM_NAME);
     if (fp != stdout)
         return;
     fprintf(fp,
         "\n"
         "Options:\n"
+        "  -b SIZE     set block size to SIZE\n"
         "  -h, --help  display this help and exit\n"
     );
 }
@@ -70,10 +75,13 @@ ssize_t xwrite(int fd, const char *buffer, size_t size)
 void shred_file(int fd, const char *path)
 {
     struct statvfs st;
-    int rc = fstatvfs(fd, &st);
-    if (rc < 0)
-        posix_error(path);
-    size_t bufsize = st.f_bsize;
+    size_t bufsize = block_size;
+    if (block_size == 0) {
+        int rc = fstatvfs(fd, &st);
+        if (rc < 0)
+            posix_error(path);
+        bufsize = st.f_bsize;
+    }
     char *buffer = malloc(bufsize);
     if (buffer == NULL)
         posix_error("malloc()");
@@ -114,8 +122,25 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
     int opt;
-    while ((opt = getopt(argc, argv, "h-:")) != -1)
+    while ((opt = getopt(argc, argv, "b:h-:")) != -1)
         switch (opt) {
+        case 'b':
+        {
+            char *endptr;
+            long value;
+            errno = 0;
+            value = strtol(optarg, &endptr, 10);
+            if (errno != 0)
+                ;
+            else if (endptr == optarg || *endptr != '\0')
+                errno = EINVAL;
+            else if (value <= 0 || (unsigned long) value >= block_size_limit)
+                errno = ERANGE;
+            if (errno != 0)
+                posix_error("-b");
+            block_size = (size_t) value;
+            break;
+        }
         case 'h':
             show_usage(stdout);
             exit(EXIT_SUCCESS);
