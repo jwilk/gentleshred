@@ -3,6 +3,7 @@
 
 CFLAGS ?= -g -O2
 CFLAGS += -Wall -Wextra
+CFLAGS += -D_FILE_OFFSET_BITS=64
 
 .PHONY: all
 all: gentleshred
