@@ -1,0 +1,10 @@
+.. code:: console
+
+   $ gentleshred --help
+   Usage: gentleshred [-b SIZE] FILE [FILE...]
+
+   Options:
+     -b SIZE     set block size to SIZE
+     -h, --help  display this help and exit
+
+.. vim:ft=rst ts=3 sts=3 sw=3 et
