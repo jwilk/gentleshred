@@ -143,7 +143,6 @@ int main(int argc, char **argv)
         case 'h':
             show_usage(stdout);
             exit(EXIT_SUCCESS);
-            break;
         case '-':
             if (strcmp(optarg, "help") == 0) {
                 show_usage(stdout);
