@@ -40,7 +40,7 @@ static void posix_error(const char *context)
     exit(EXIT_FAILURE);
 }
 
-ssize_t xread(int fd, char *buffer, size_t size)
+static ssize_t xread(int fd, char *buffer, size_t size)
 {
     size_t asize = 0;
     while (asize < size) {
@@ -54,7 +54,7 @@ ssize_t xread(int fd, char *buffer, size_t size)
     return asize;
 }
 
-ssize_t xwrite(int fd, const char *buffer, size_t size)
+static ssize_t xwrite(int fd, const char *buffer, size_t size)
 {
     size_t asize = 0;
     while (asize < size) {
@@ -71,7 +71,7 @@ ssize_t xwrite(int fd, const char *buffer, size_t size)
     return asize;
 }
 
-void shred_file(int fd, const char *path)
+static void shred_file(int fd, const char *path)
 {
     struct statvfs st;
     size_t bufsize = block_size;
