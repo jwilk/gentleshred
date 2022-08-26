@@ -116,10 +116,6 @@ static void shred_file(int fd, const char *path)
 
 int main(int argc, char **argv)
 {
-    if (argc <= 1) {
-        show_usage(stderr);
-        exit(EXIT_FAILURE);
-    }
     int opt;
     while ((opt = getopt(argc, argv, "b:h-:")) != -1)
         switch (opt) {
