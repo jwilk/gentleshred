@@ -27,7 +27,7 @@ static void show_usage(FILE *fp)
         "\n"
         "Options:\n"
         "  -b SIZE     set block size to SIZE\n"
-        "  -h, --help  display this help and exit\n"
+        "  -h, --help  show this help message and exit\n"
     );
 }
 
